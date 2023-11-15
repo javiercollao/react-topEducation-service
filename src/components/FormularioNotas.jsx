@@ -1,26 +1,34 @@
-import React from 'react'
+import React, { useRef } from 'react';
+import ExamenService from "./../service/ExamenService";
 
-export default function FormularioNotas() {
+export default function FileInput() {
+  const fileInput = useRef(null);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    
+    const formData = new FormData();
+    formData.append('archivo', fileInput.current.files[0]);
+  
+    try {
+      const response = await ExamenService.postExamenes(formData);
+  
+      console.log('Exámenes creados:', response.data);
+      // Realizar aquí cualquier lógica adicional después de enviar el archivo
+    } catch (error) {
+      console.error('Error al crear los exámenes:', error);
+    }
+  };
+  
+
   return (
-    <div>
-        <div class="modal-dialog"> 
-        <div class="py-5"> 
-            <div class="modal-body">
-                    <div class="row">
-                    <div class="col-sm-6">
-                        <label for="nombre" class="form-label">Documento Excel</label>
-                        <input type="file"  class="form-control" id="nombre" placeholder="" value="" required=".xlsx"  />
-                        <div class="invalid-feedback">
-                        Requerido
-                        </div>
-                    </div>
-                    </div>
-            </div>
-            <div class="modal-footer"> 
-            <button type="submit" class="btn btn-primary">Guardar</button>
-            </div>
-        </div>
-        </div> 
-    </div>
-  )
+    <form onSubmit={handleSubmit} encType="multipart/form-data" className="py-3">
+      <label>
+        Upload file:
+        <input type="file" ref={fileInput} />
+      </label>
+      <br />
+      <button className="btn btn-primary my-3" type="submit">Submit</button>
+    </form>
+  );
 }
