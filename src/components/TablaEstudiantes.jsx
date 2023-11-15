@@ -1,7 +1,18 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from './Button'
+import EstudianteService from "./../service/EstudianteService"
+import { Link } from 'react-router-dom';
 
 export default function TablaEstudiantes() {
+  const [estudianteEntity, setEstudianteEntity] = useState([]); 
+
+  useEffect(() => {
+      EstudianteService.getEstudiantes().then((res) => {
+          console.log("Response data Estudiante:", res.data);
+          setEstudianteEntity(res.data); 
+      });
+  }, []);
+
   return (
     <>
      <div class="py-3">
@@ -19,23 +30,32 @@ export default function TablaEstudiantes() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td> 
-                    <td>Javier</td> 
-                    <td>Collao</td> 
-                    <td>20.789.456-K</td>
-                    <td>Municipal</td> 
-                    <td>
-                        <Button>Ver Cuotas</Button>
-                    </td> 
-                    <td>
-                        <Button>Ver Puntajes</Button>
-                    </td> 
-                    <td>
-                        <Button>Ver Reporte</Button>
-                    </td> 
-                     
-                  </tr>
+                    {
+                        estudianteEntity.map((estudiante , i) => (
+                            <tr key= {estudiante.rut}>
+                                <td> {i+1} </td>
+                                <td> {estudiante.nombre} </td>
+                                <td> {estudiante.apellidos} </td>
+                                <td> {estudiante.rut} </td>
+                                <td> {estudiante.categoria_colegio} </td>
+                                <td>
+                                  <Link to={"/cuotas/"+ estudiante.rut}>
+                                    <Button>Ver Cuotas</Button>
+                                  </Link>
+                                </td> 
+                                <td>
+                                  <Link to={"/puntajes/"+ estudiante.rut}>
+                                    <Button>Ver Puntajes</Button>
+                                  </Link>
+                                </td>
+                                <td>
+                                  <Link to={"/reporte/"+ estudiante.rut}>
+                                    <Button>Ver Reporte</Button>
+                                  </Link>
+                                </td>
+                            </tr>
+                        ))
+                    }
                 </tbody>
               </table>
         </div>
